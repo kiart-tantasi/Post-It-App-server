@@ -9,12 +9,12 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const mongoose = require("mongoose");
-const path = require("path");
+// const path = require("path"); // separate
  
 // MIDDLEWARE
 app.use(express.urlencoded({extended:false}));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "build")));
+// app.use(express.static(path.join(__dirname, "build"))); // separate
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 // MONGODB (MONGOOSE)
@@ -69,7 +69,7 @@ passport.use(new LocalStrategy(
 passport.use( new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: "http://localhost:4000/auth/callback"
+    callbackURL: "https://post-it-app-by-me.herokuapp.com/auth/callback" //to follow google policy
 },
     async function(accessToken, refreshToken, profile, cb) {
         const user = await User.findOne({googleId:profile.id});
@@ -162,7 +162,7 @@ app.post("/logout", blockNotAuthenticated, (req,res) => {
 // GOOGLE AUTH ROUTES
 app.get("/auth", blockAuthenticated, passport.authenticate("google", { scope: ["profile"] }));
 
-app.get("/auth/callback", passport.authenticate("google", { failureRedirect: "/authentication"}), (req,res) => {
+app.get("/auth/callback", passport.authenticate("google", { failureRedirect: "http://localhost:3000/authentication"}), (req,res) => {
     res.redirect("http://localhost:3000");
 });
 
@@ -234,10 +234,11 @@ app.patch("/posts/:itemId", blockNotAuthenticated, (req,res) => {
     )
 })
 
-// EVERY OTHERS' AND REACT'S ROUTES
-app.get("/*", function(req,res) {
-    res.sendFile(path.join(__dirname, "build", "index.html"));
-});
+// EVERY OTHERS' AND REACT'S ROUTES 
+// app.get("/*", function(req,res) {
+//     res.sendFile(path.join(__dirname, "build", "index.html"));
+// });
+// separate
 
 // BLOCK PEOPLE WITH NO AUTHENTICATION
 function blockNotAuthenticated(req,res,next) {
