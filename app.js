@@ -10,7 +10,6 @@ const MongoStore = require("connect-mongo");
 const path = require("path");
 // ------------------ DATABASE ------------------ //
 const dbUrl = process.env.DB_URL + process.env.DB_NAME;
-console.log(dbUrl);
 mongoose.connect( dbUrl ); 
 const User = require("./mongodb/mongodb");
 // ------------------ MIDDLEWARE ------------------ //
